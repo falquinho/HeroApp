@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, TextInputProps, View } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
 import { Colors } from '../shared/colors'
+import { Spacing } from '../shared/spacing'
 import { CustomText } from './CustomText'
 
 
@@ -34,5 +35,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.gray,
     borderRadius: 4,
+    paddingHorizontal: 4,
   },
 });
