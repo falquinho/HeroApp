@@ -1,5 +1,7 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import Config from "react-native-config";
+import { CharacterDataContainer } from "../types/CharacterDataContainerType";
+import { CharacterDataWrapperType } from "../types/CharacterDataWrapperType";
 import { GenericObject } from "../types/GenericObject";
 
 const apikey = Config.MARVEL_PUB_KEY;
@@ -13,6 +15,14 @@ export const paramsWithAuth = (params?: GenericObject): GenericObject  => ({
   apikey,
 })
 
-export const getCharacters = () => {
-  axiosInstance.get('', { params: paramsWithAuth() })
+export const getCharacters = async (searchName?: string): Promise<CharacterDataContainer> => {
+  const params = {
+    limit: 4,
+    ...(!!searchName && { nameStartsWith: searchName }) || {},
+  };
+  const res: AxiosResponse<CharacterDataWrapperType> = await axiosInstance.get(
+    '/v1/public/characters',
+    { params: paramsWithAuth(params) }
+  );
+  return res.data.data;
 }

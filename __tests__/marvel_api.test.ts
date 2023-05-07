@@ -1,5 +1,5 @@
 import Config from "react-native-config";
-import { paramsWithAuth } from "../src/shared/marvel_api"
+import { getCharacters, paramsWithAuth } from "../src/shared/marvel_api"
 
 test("Given no parameter, 'paramsWithAuth' returns object with defined member 'apikey': ", () => {
   const res = paramsWithAuth();
@@ -24,3 +24,23 @@ test(
     });
   }
 )
+
+test(
+  "Given no parameter, getCharacters should resolve to the list of all characters, limited to 4 per page.", 
+  () => {
+    return getCharacters().then(data => {
+      expect(data).toBeDefined();
+      expect(data.count).toBeLessThanOrEqual(4);
+    });
+  }
+);
+
+test(
+  "Given a non-empty string, getCharacters should resolve to a whatever number of characters, limited to 4 per page.", 
+  () => {
+    return getCharacters("sp").then(data => {
+      expect(data).toBeDefined();
+      expect(data.count).toBeLessThanOrEqual(4);
+    });
+  }
+);
