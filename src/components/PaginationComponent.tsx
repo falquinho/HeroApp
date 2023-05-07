@@ -3,6 +3,7 @@ import { FlatList, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-n
 import { Colors } from '../shared/colors'
 import { Spacing } from '../shared/spacing'
 import { CustomText } from './CustomText'
+import { Spacer } from './Spacer'
 
 
 export type PaginationComponentProps = {
@@ -41,7 +42,7 @@ export const PaginationComponent: React.FC<PaginationComponentProps> = ({
             disabled={disabled}
           />
         )}
-        ItemSeparatorComponent={() => <View style={{width: 20}}/>}
+        ItemSeparatorComponent={() => <Spacer size={20}/>}
       />
       <RightArrow
         onPress={() => onPageChange(currentPage + 1)}
