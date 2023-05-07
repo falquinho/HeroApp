@@ -25,7 +25,8 @@ export const CharacterSearchScreen: React.FC = () => {
           data={[1,2,3,4]}
           renderItem={({item}) => <CharacterRowComponent/>}
           style={{flexGrow: 0}}
-          ItemSeparatorComponent={() => <Spacer size={2}/>}
+          ItemSeparatorComponent={() => <Spacer size={1}/>}
+          ListFooterComponent={() => <Spacer size={1}/>}
         />
         <PaginationComponent
           currentPage={1}
