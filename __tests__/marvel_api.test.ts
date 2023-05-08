@@ -1,6 +1,6 @@
 import Config from "react-native-config";
 import mockAxios from "jest-mock-axios";
-import { getCharacters, paramsWithAuth } from "../src/shared/marvel_api";
+import marvelAPI from "../src/shared/marvelAPI";
 import { CharacterDataWrapperType } from "../src/shared/types/CharacterDataWrapperType";
 
 
@@ -9,7 +9,7 @@ afterEach(() => {
 })
 
 test("Given no parameter, 'paramsWithAuth' returns object with defined member 'apikey': ", () => {
-  const res = paramsWithAuth();
+  const res = marvelAPI.paramsWithAuth();
   expect(typeof res).toBe("object");
   expect(res).toHaveProperty('apikey');
   expect(res.apikey).toBe(Config.MARVEL_PUB_KEY);
@@ -24,7 +24,7 @@ test(
       param3: "value3",
     }
 
-    const res = paramsWithAuth(params);
+    const res = marvelAPI.paramsWithAuth(params);
     expect(res).toEqual({
       ...params,
       apikey: Config.MARVEL_PUB_KEY,
@@ -35,7 +35,7 @@ test(
 test(
   "Given no parameter, getCharacters should resolve to the list of all characters, limited to 4 per page.", 
   () => {
-    getCharacters().then(data => {
+    marvelAPI.getCharacters().then(data => {
       expect(data).toBeDefined();
       expect(data.count).toBeLessThanOrEqual(4);
     });
@@ -63,7 +63,7 @@ test(
 test(
   "Given a non-empty string, getCharacters should resolve to a whatever number of characters, limited to 4 per page.", 
   () => {
-    getCharacters("sp").then(data => {
+    marvelAPI.getCharacters("sp").then(data => {
       expect(data).toBeDefined();
       expect(data.count).toBeLessThanOrEqual(4);
     });
