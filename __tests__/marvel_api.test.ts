@@ -1,7 +1,7 @@
-import Config from "react-native-config";
+import { MARVEL_PUB_KEY } from "@env";
 import mockAxios from "jest-mock-axios";
 import marvelAPI from "../src/shared/marvelAPI";
-import { CharacterDataWrapperType } from "../src/shared/types/CharacterDataWrapperType";
+import { CharacterDataWrapperType } from "../src/types/CharacterDataWrapperType";
 
 
 afterEach(() => {
@@ -12,7 +12,7 @@ test("Given no parameter, 'paramsWithAuth' returns object with defined member 'a
   const res = marvelAPI.paramsWithAuth();
   expect(typeof res).toBe("object");
   expect(res).toHaveProperty('apikey');
-  expect(res.apikey).toBe(Config.MARVEL_PUB_KEY);
+  expect(res.apikey).toBe(MARVEL_PUB_KEY);
 });
 
 test(
@@ -27,7 +27,7 @@ test(
     const res = marvelAPI.paramsWithAuth(params);
     expect(res).toEqual({
       ...params,
-      apikey: Config.MARVEL_PUB_KEY,
+      apikey: MARVEL_PUB_KEY,
     });
   }
 )

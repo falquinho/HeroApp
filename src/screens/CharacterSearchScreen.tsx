@@ -9,7 +9,7 @@ import { Spacer } from '../components/Spacer'
 import { Colors } from '../shared/colors'
 import marvelAPI from '../shared/marvelAPI'
 import { Spacing } from '../shared/spacing'
-import { Character } from '../shared/types/Character'
+import { Character } from '../types/Character'
 import { CharacterListHeader, CharacterSearchTitle } from './CharacterSearchScreen.components'
 
 
@@ -32,7 +32,7 @@ export const CharacterSearchScreen: React.FC = () => {
       setCurrPage((res.offset / res.limit) + 1);
       setCharacters(res.results);
     } catch (error: any) {
-      console.error(error.toJSON())
+      // console.error(error.toJSON())
       Alert.alert(
         "Erro ao buscar personagens",
         error.message || "",
