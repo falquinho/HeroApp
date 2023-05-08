@@ -1,5 +1,12 @@
 import Config from "react-native-config";
-import { getCharacters, paramsWithAuth } from "../src/shared/marvel_api"
+import mockAxios from "jest-mock-axios";
+import { getCharacters, paramsWithAuth } from "../src/shared/marvel_api";
+import { CharacterDataWrapperType } from "../src/shared/types/CharacterDataWrapperType";
+
+
+afterEach(() => {
+  mockAxios.reset();
+})
 
 test("Given no parameter, 'paramsWithAuth' returns object with defined member 'apikey': ", () => {
   const res = paramsWithAuth();
@@ -28,9 +35,27 @@ test(
 test(
   "Given no parameter, getCharacters should resolve to the list of all characters, limited to 4 per page.", 
   () => {
-    return getCharacters().then(data => {
+    getCharacters().then(data => {
       expect(data).toBeDefined();
       expect(data.count).toBeLessThanOrEqual(4);
+    });
+
+    mockAxios.mockResponse({ 
+      data: {
+        attributionHTML: '',
+        attributionText: '',
+        code: 200,
+        copyright: '',
+        status: '200',
+        etag: '',
+        data: {
+          count: 0,
+          limit: 20,
+          offset: 0,
+          total: 0,
+          results: [],
+        }
+      } as CharacterDataWrapperType
     });
   }
 );
@@ -38,9 +63,27 @@ test(
 test(
   "Given a non-empty string, getCharacters should resolve to a whatever number of characters, limited to 4 per page.", 
   () => {
-    return getCharacters("sp").then(data => {
+    getCharacters("sp").then(data => {
       expect(data).toBeDefined();
       expect(data.count).toBeLessThanOrEqual(4);
+    });
+
+    mockAxios.mockResponse({ 
+      data: {
+        attributionHTML: '',
+        attributionText: '',
+        code: 200,
+        copyright: '',
+        status: '200',
+        etag: '',
+        data: {
+          count: 0,
+          limit: 20,
+          offset: 0,
+          total: 0,
+          results: [],
+        }
+      } as CharacterDataWrapperType
     });
   }
 );

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native'
 import { CharacterRowComponent } from '../components/CharacterRowComponent'
 import { CustomTextInput } from '../components/CustomTextInput'
@@ -10,6 +10,8 @@ import { CharacterListHeader, CharacterSearchTitle } from './CharacterSearchScre
 
 
 export const CharacterSearchScreen: React.FC = () => {
+  const [currPage, setCurrPage] = useState(1);
+  
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={styles.headerContainer}>
