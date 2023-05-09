@@ -26,7 +26,7 @@ export const CharacterSearchScreen: React.FC = () => {
   const fetchPageData = async (page: number) => {
     setLoading(true);
     try {
-      const res = await marvelAPI.getCharacters();
+      const res = await marvelAPI.getCharacters(page);
       setTotalNumPages(Math.ceil(res.total / res.limit));
       setCurrPage((res.offset / res.limit) + 1);
       setCharacters(res.results);
@@ -62,7 +62,11 @@ export const CharacterSearchScreen: React.FC = () => {
           style={{flexGrow: 0}}
           ItemSeparatorComponent={() => <Spacer size={1}/>}
           ListFooterComponent={() => <Spacer size={1}/>}
-          ListEmptyComponent={() => <EmptyListComponent/>}
+          ListEmptyComponent={() => (
+            (!loading && <EmptyListComponent/>) || null
+          )}
+          refreshing={loading}
+          onRefresh={() => fetchPageData(currPage)}
         />
         <PaginationComponent
           currentPage={currPage}
