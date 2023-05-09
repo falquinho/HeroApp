@@ -12,7 +12,6 @@ export const CharacterSearchTitle: React.FC = () => {
       <CustomTitle>
         Busca Marvel <CustomText style={styles.light}>Teste Front-End</CustomText>
       </CustomTitle>
-      <View style={styles.underscore}></View>
     </View>
   )
 }
@@ -30,11 +29,6 @@ export const CharacterListHeader: React.FC = () => {
 const styles = StyleSheet.create({
   light: {
     fontWeight: '300',
-  },
-  underscore: {
-    height: 4,
-    width: 54,
-    backgroundColor: Colors.primary,
   },
   headerText: {
     fontSize: 16,
