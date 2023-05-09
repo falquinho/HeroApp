@@ -2,21 +2,33 @@ import React from 'react'
 import { Image, StyleSheet, View } from 'react-native'
 import { Colors } from '../shared/colors'
 import { Spacing } from '../shared/spacing'
+import { Character } from '../types/Character'
 import { CustomText } from './CustomText'
 
 
-export const CharacterRowComponent: React.FC = () => {
+export type CharacterRowComponentProps = {
+  character: Character,
+}
+
+
+export const CharacterRowComponent: React.FC<CharacterRowComponentProps> = ({
+  character,
+}) => {
+  const { path, extension } = character.thumbnail;
+
   return (
     <View style={styles.mainContainer}>
       <View style={styles.imageContainer}>
         <Image 
           style={styles.image}
-          source={{uri: 'https://reactnative.dev/img/tiny_logo.png'}}
+          source={{
+            uri: `${path.replace('http:', 'https:')}/standard_xlarge.${extension}`
+          }}
         />
       </View>
       <View style={{justifyContent: 'center'}}>
         <CustomText style={styles.text}>
-          Hero Name
+          {character.name}
         </CustomText>
       </View>
     </View>

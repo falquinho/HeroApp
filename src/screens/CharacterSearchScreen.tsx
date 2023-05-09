@@ -58,7 +58,8 @@ export const CharacterSearchScreen: React.FC = () => {
         <CharacterListHeader/>
         <FlatList
           data={characters}
-          renderItem={({item}) => <CharacterRowComponent/>}
+          keyExtractor={item => "" + item.id}
+          renderItem={({item}) => <CharacterRowComponent character={item}/>}
           style={{flexGrow: 0}}
           ItemSeparatorComponent={() => <Spacer size={1}/>}
           ListFooterComponent={() => <Spacer size={1}/>}
