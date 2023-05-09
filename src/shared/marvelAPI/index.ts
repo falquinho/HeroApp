@@ -21,12 +21,13 @@ const paramsWithAuth = (params?: GenericObject): GenericObject  => {
   ...(params || {}),
   apikey: MARVEL_PUB_KEY,
   ts,
-  hash: MD5(ts + MARVEL_PRIV_KEY + MARVEL_PUB_KEY),
+  hash: MD5(ts + MARVEL_PRIV_KEY + MARVEL_PUB_KEY).toString(),
 })}
 
-const getCharacters = async (searchName?: string): Promise<CharacterDataContainer> => {
+const getCharacters = async (page: number = 1, searchName: string = ""): Promise<CharacterDataContainer> => {
   const params = paramsWithAuth({
     limit: 4,
+    offset: (page - 1) * 4,
     ...(!!searchName && { nameStartsWith: searchName }) || {},
   });
 
