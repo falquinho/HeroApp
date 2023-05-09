@@ -12,6 +12,7 @@ const axiosInstance = axios.create({
 const paramsWithAuth = (params?: GenericObject): GenericObject  => ({
   ...(params || {}),
   apikey: MARVEL_PUB_KEY,
+  ts: "" + Date.now(),
 })
 
 const getCharacters = async (searchName?: string): Promise<CharacterDataContainer> => {
