@@ -1,6 +1,7 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { CustomText } from '../components/CustomText'
+import { CustomTitle } from '../components/CustomTitle'
 import { Colors } from '../shared/colors'
 import { Spacing } from '../shared/spacing'
 
@@ -8,9 +9,9 @@ import { Spacing } from '../shared/spacing'
 export const CharacterSearchTitle: React.FC = () => {
   return (
     <View style={{marginBottom: Spacing.sm}}>
-      <CustomText style={styles.title}>
+      <CustomTitle>
         Busca Marvel <CustomText style={styles.light}>Teste Front-End</CustomText>
-      </CustomText>
+      </CustomTitle>
       <View style={styles.underscore}></View>
     </View>
   )
@@ -27,13 +28,6 @@ export const CharacterListHeader: React.FC = () => {
 }
 
 const styles = StyleSheet.create({
-  title: {
-    fontSize: 16,
-    fontWeight: '900',
-    color: Colors.primary,
-    textTransform: 'uppercase',
-    lineHeight: 32,
-  },
   light: {
     fontWeight: '300',
   },

@@ -1,23 +1,23 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React from 'react'
-import { SafeAreaView, TouchableOpacity, View } from 'react-native'
-import { CustomText } from '../components/CustomText'
-import { CustomTitle } from '../components/CustomTitle'
+import { SafeAreaView } from 'react-native'
+import { MainStackParamList } from '../navigators/MainNavigator'
+import { BackRow, TitleRow } from './CharacterDetailsScreen.components'
 
 
-type CharacterDetailsScreenProps = {}
+export type CharacterDetailsScreenProps =
+  NativeStackScreenProps<MainStackParamList, "CharacterDetails">;
 
-export const CharacterDetailsScreen: React.FC<CharacterDetailsScreenProps> = () => {
+export const CharacterDetailsScreen: React.FC<CharacterDetailsScreenProps> = ({
+  navigation,
+  route,
+}) => {
+  const { character } = route.params;
+  
   return (
     <SafeAreaView>
-      <View>
-        <TouchableOpacity>
-          <CustomText>{"< Voltar"}</CustomText>
-        </TouchableOpacity>
-      </View>
-
-      <View>
-        <CustomTitle>{"character.name"}</CustomTitle>
-      </View>
+      <BackRow navigation={navigation}/>
+      <TitleRow title={character.name}/>
     </SafeAreaView>
   )
 }
