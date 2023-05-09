@@ -27,7 +27,6 @@ export const CharacterSearchScreen: React.FC = () => {
     setLoading(true);
     try {
       const res = await marvelAPI.getCharacters();
-      console.log("marvelAPI.getCharacters() res: ", res)
       setTotalNumPages(Math.ceil(res.total / res.limit));
       setCurrPage((res.offset / res.limit) + 1);
       setCharacters(res.results);

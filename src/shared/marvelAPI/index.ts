@@ -24,14 +24,13 @@ const paramsWithAuth = (params?: GenericObject): GenericObject  => {
   hash: MD5(ts + MARVEL_PRIV_KEY + MARVEL_PUB_KEY).toString(),
 })}
 
+
 const getCharacters = async (page: number = 1, searchName: string = ""): Promise<CharacterDataContainer> => {
   const params = paramsWithAuth({
     limit: 4,
     offset: (page - 1) * 4,
     ...(!!searchName && { nameStartsWith: searchName }) || {},
   });
-
-  console.log('params: ', params);
 
   const res: AxiosResponse<CharacterDataWrapperType> = await axiosInstance.get(
     '/v1/public/characters',
