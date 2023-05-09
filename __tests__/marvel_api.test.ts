@@ -41,7 +41,7 @@ describe("marvelAPI.paramsWithAuth", () => {
 
     it.each([[resA], [resB]])("returned object member 'hash' should be a MD5 of composed string 'ts' + 'privateKey' + 'publicKey'.", (res) => {
       expect(res.hash).toStrictEqual(
-        MD5("" + Date.now() + MARVEL_PRIV_KEY + MARVEL_PUB_KEY).toString()
+        MD5("timestampis" + Date.now() + MARVEL_PRIV_KEY + MARVEL_PUB_KEY).toString()
       );
     });
   });
@@ -55,8 +55,8 @@ describe("marvelAPI.paramsWithAuth", () => {
         ...param, 
         ...{
           apikey: MARVEL_PUB_KEY,
-          ts: "" + Date.now(),
-          hash: MD5("" + Date.now() + MARVEL_PRIV_KEY + MARVEL_PUB_KEY).toString(),
+          ts: "timestampis" + Date.now(),
+          hash: MD5("timestampis" + Date.now() + MARVEL_PRIV_KEY + MARVEL_PUB_KEY).toString(),
         }
       });
     });

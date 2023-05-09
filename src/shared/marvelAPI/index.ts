@@ -15,7 +15,7 @@ const axiosInstance = axios.create({
 })
 
 const paramsWithAuth = (params?: GenericObject): GenericObject  => { 
-  const ts = "" + Date.now();
+  const ts = "timestampis" + Date.now();
 
   return({
   ...(params || {}),

@@ -32,10 +32,9 @@ export const CharacterSearchScreen: React.FC = () => {
       setCurrPage((res.offset / res.limit) + 1);
       setCharacters(res.results);
     } catch (error: any) {
-      console.error(error.toJSON())
       Alert.alert(
         "Erro ao buscar personagens",
-        error.message || "",
+        error.response?.data?.message || "",
       )
     } finally {
       setLoading(false);
