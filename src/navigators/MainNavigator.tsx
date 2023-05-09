@@ -3,12 +3,18 @@ import React from 'react'
 import { CharacterDetailsScreen } from '../screens/CharacterDetailsScreen'
 import { CharacterSearchScreen } from '../screens/CharacterSearchScreen'
 
-const Stack = createNativeStackNavigator()
+
+export type MainStackParamList = {
+  CharacterSearch: undefined,
+  CharacterDetails: { characterId: number },
+}
+
+const Stack = createNativeStackNavigator<MainStackParamList>()
 
 export const MainNavigator: React.FC = () => {
   return (
     <Stack.Navigator
-      initialRouteName='CharacterScreen'
+      initialRouteName='CharacterSearch'
       screenOptions={{headerShown: false}}
     >
       <Stack.Screen name='CharacterSearch' component={CharacterSearchScreen}/>

@@ -1,5 +1,8 @@
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import React from 'react'
-import { Image, StyleSheet, View } from 'react-native'
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { MainStackParamList } from '../navigators/MainNavigator'
 import { Colors } from '../shared/colors'
 import { Spacing } from '../shared/spacing'
 import { Character } from '../types/Character'
@@ -10,14 +13,23 @@ export type CharacterRowComponentProps = {
   character: Character,
 }
 
+type NavigationProp = NativeStackNavigationProp<MainStackParamList, 'CharacterSearch'>;
 
 export const CharacterRowComponent: React.FC<CharacterRowComponentProps> = ({
   character,
 }) => {
   const { path, extension } = character.thumbnail;
+  const navigation = useNavigation<NavigationProp>()
+
+  const handlePress = () => {
+    navigation.push(
+      "CharacterDetails",
+      { characterId: character.id },
+    );
+  }
 
   return (
-    <View style={styles.mainContainer}>
+    <TouchableOpacity style={styles.mainContainer} onPress={handlePress}>
       <View style={styles.imageContainer}>
         <Image 
           style={styles.image}
@@ -31,7 +43,7 @@ export const CharacterRowComponent: React.FC<CharacterRowComponentProps> = ({
           {character.name}
         </CustomText>
       </View>
-    </View>
+    </TouchableOpacity>
   )
 }
 

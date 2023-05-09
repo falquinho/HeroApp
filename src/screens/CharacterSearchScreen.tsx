@@ -1,4 +1,3 @@
-import { AxiosError } from 'axios'
 import React, { useEffect, useState } from 'react'
 import { Alert, FlatList, SafeAreaView, StyleSheet, View } from 'react-native'
 import { CharacterRowComponent } from '../components/CharacterRowComponent'
