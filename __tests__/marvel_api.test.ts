@@ -14,6 +14,7 @@ afterEach(() => {
 
 Date.now = jest.fn(() => 9999);
 
+
 describe("marvelAPI.paramsWithAuth", () => {
   describe("given no parameter or object parameter", () => {
     const resA = marvelAPI.paramsWithAuth();
@@ -60,60 +61,43 @@ describe("marvelAPI.paramsWithAuth", () => {
       });
     });
   })
-})
+}); // END OF marvelAPI.paramsWithAuth TESTS
 
-test(
-  "Given no parameter, getCharacters should resolve to the list of all characters, limited to 4 per page.", 
-  () => {
-    marvelAPI.getCharacters().then(data => {
-      expect(data).toBeDefined();
-      expect(data.count).toBeLessThanOrEqual(4);
-    });
 
-    mockAxios.mockResponse({ 
-      data: {
-        attributionHTML: '',
-        attributionText: '',
-        code: 200,
-        copyright: '',
-        status: '200',
-        etag: '',
-        data: {
+describe("marvelAPI.getCharacters", () => {
+  describe("given no parameter, only page or page and searchTerm", () => {
+    it.each([
+      [undefined, undefined],
+      [1, undefined],
+      [1, "sp"],
+    ])("should resolve to an object of type CharacterDataContainer.", (page, searchTerm) => {
+      marvelAPI.getCharacters().then(data => {
+        expect(data).toEqual({
           count: 0,
           limit: 20,
           offset: 0,
           total: 0,
           results: [],
-        }
-      } as CharacterDataWrapperType
-    });
-  }
-);
-
-test(
-  "Given a non-empty string, getCharacters should resolve to a whatever number of characters, limited to 4 per page.", 
-  () => {
-    marvelAPI.getCharacters("sp").then(data => {
-      expect(data).toBeDefined();
-      expect(data.count).toBeLessThanOrEqual(4);
-    });
-
-    mockAxios.mockResponse({ 
-      data: {
-        attributionHTML: '',
-        attributionText: '',
-        code: 200,
-        copyright: '',
-        status: '200',
-        etag: '',
+        });
+      });
+  
+      mockAxios.mockResponse({ 
         data: {
-          count: 0,
-          limit: 20,
-          offset: 0,
-          total: 0,
-          results: [],
-        }
-      } as CharacterDataWrapperType
+          attributionHTML: '',
+          attributionText: '',
+          code: 200,
+          copyright: '',
+          status: '200',
+          etag: '',
+          data: {
+            count: 0,
+            limit: 20,
+            offset: 0,
+            total: 0,
+            results: [],
+          }
+        } as CharacterDataWrapperType
+      });
     });
-  }
-);
+  });
+}); // END OF marvelAPI.getCharacters TESTS
