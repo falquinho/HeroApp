@@ -1,3 +1,4 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useEffect, useState } from 'react'
 import { Alert, FlatList, SafeAreaView, StyleSheet, View } from 'react-native'
 import { CharacterRowComponent } from '../components/CharacterRowComponent'
@@ -5,6 +6,7 @@ import { CustomTextInput } from '../components/CustomTextInput'
 import { EmptyListComponent } from '../components/EmptyListComponent'
 import { PaginationComponent } from '../components/PaginationComponent'
 import { Spacer } from '../components/Spacer'
+import { MainStackParamList } from '../navigators/MainNavigator'
 import { Colors } from '../shared/colors'
 import marvelAPI from '../shared/marvelAPI'
 import { Spacing } from '../shared/spacing'
@@ -12,7 +14,12 @@ import { Character } from '../types/Character'
 import { CharacterListHeader, CharacterSearchTitle } from './CharacterSearchScreen.components'
 
 
-export const CharacterSearchScreen: React.FC = () => {
+export type CharacterSearchScreenProps = 
+  NativeStackScreenProps<MainStackParamList, "CharacterSearch">;
+
+export const CharacterSearchScreen: React.FC<CharacterSearchScreenProps> = ({
+  navigation,
+}) => {
   const [loading, setLoading] = useState(false);
   const [currPage, setCurrPage] = useState(1);
   const [totalNumPages, setTotalNumPages] = useState(0);
@@ -44,6 +51,15 @@ export const CharacterSearchScreen: React.FC = () => {
     fetchPageData(page);
   }
 
+  const CharacterRowWithNavigation: React.FC<{character: Character}> = ({
+    character,
+  }) => (
+    <CharacterRowComponent
+      character={character}
+      onPress={() => navigation.push("CharacterDetails", { character })}
+    />
+  )
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <View style={styles.headerContainer}>
@@ -58,7 +74,9 @@ export const CharacterSearchScreen: React.FC = () => {
         <FlatList
           data={characters}
           keyExtractor={item => "" + item.id}
-          renderItem={({item}) => <CharacterRowComponent character={item}/>}
+          renderItem={({item}) => (
+            <CharacterRowWithNavigation character={item}/>
+          )}
           style={{flexGrow: 0}}
           ItemSeparatorComponent={() => <Spacer size={1}/>}
           ListFooterComponent={() => <Spacer size={1}/>}

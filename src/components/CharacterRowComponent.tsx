@@ -11,25 +11,17 @@ import { CustomText } from './CustomText'
 
 export type CharacterRowComponentProps = {
   character: Character,
+  onPress: () => void,
 }
-
-type NavigationProp = NativeStackNavigationProp<MainStackParamList, 'CharacterSearch'>;
 
 export const CharacterRowComponent: React.FC<CharacterRowComponentProps> = ({
   character,
+  onPress,
 }) => {
   const { path, extension } = character.thumbnail;
-  const navigation = useNavigation<NavigationProp>()
-
-  const handlePress = () => {
-    navigation.push(
-      "CharacterDetails",
-      { characterId: character.id },
-    );
-  }
 
   return (
-    <TouchableOpacity style={styles.mainContainer} onPress={handlePress}>
+    <TouchableOpacity style={styles.mainContainer} onPress={onPress}>
       <View style={styles.imageContainer}>
         <Image 
           style={styles.image}
