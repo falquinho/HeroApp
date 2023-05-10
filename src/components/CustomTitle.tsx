@@ -7,7 +7,7 @@ import { CustomText } from './CustomText'
 export const CustomTitle: React.FC<TextProps> = (props) => {
   return (
     <View>
-      <CustomText {...props} style={[props.style, styleTitle]}/>
+      <CustomText {...props} style={[styleTitle, props.style]}/>
       <View style={styleUnderscore}/>
     </View>
   )
