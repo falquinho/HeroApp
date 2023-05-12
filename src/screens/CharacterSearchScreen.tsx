@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Alert, FlatList, SafeAreaView, StyleSheet, View } from 'react-native'
 import { CharacterRowComponent } from '../components/CharacterRowComponent'
 import { CustomTextInput } from '../components/CustomTextInput'
@@ -8,7 +8,8 @@ import { PaginationComponent } from '../components/PaginationComponent'
 import { Spacer } from '../components/Spacer'
 import { MainStackParamList } from '../navigators/MainNavigator'
 import { Colors } from '../shared/colors'
-import marvelAPI from '../shared/marvelAPI'
+import { debounce } from '../shared/debounce'
+import marvelAPI, { buildCharacterPageDataFetcher } from '../shared/marvelAPI'
 import { Spacing } from '../shared/spacing'
 import { Character } from '../types/Character'
 import { CharacterListHeader, CharacterSearchTitle } from './CharacterSearchScreen.components'
@@ -24,32 +25,38 @@ export const CharacterSearchScreen: React.FC<CharacterSearchScreenProps> = ({
   const [currPage, setCurrPage] = useState(1);
   const [totalNumPages, setTotalNumPages] = useState(0);
   const [characters, setCharacters] = useState<Array<Character>>([]);
+  const [input, setInput] = useState("");
+
+  const fetchPageData = buildCharacterPageDataFetcher({
+    characterDataSetter: setCharacters,
+    onError: (error: any) => {
+      Alert.alert(
+        "Erro ao buscar personagens",
+        error.response?.data?.message || "",
+      )
+    },
+    loadingSetter: setLoading,
+    pageSetter: setCurrPage,
+    totalPagesSetter: setTotalNumPages,
+  });
 
   useEffect(() => {
     fetchPageData(currPage);
   }, []);
 
-  const fetchPageData = async (page: number) => {
-    setLoading(true);
-    try {
-      const res = await marvelAPI.getCharacters(page);
-      setTotalNumPages(Math.ceil(res.total / res.limit));
-      setCurrPage((res.offset / res.limit) + 1);
-      setCharacters(res.results);
-    } catch (error: any) {
-      Alert.alert(
-        "Erro ao buscar personagens",
-        error.response?.data?.message || "",
-      )
-    } finally {
-      setLoading(false);
-    }
-  }
-
   const handlePageChange = (page: number) => {
     setCurrPage(page);
-    fetchPageData(page);
+    fetchPageData(page, input);
   }
+
+  const handleTextChange = (text: string) => {
+    setCharacters([]);
+    setInput(text);
+    fetchPageData(1, text);
+  }
+  const debouncedHandleTextChangeRef = useRef(
+    debounce<(text: string) => void>(handleTextChange)
+  );
 
   const CharacterRowWithNavigation: React.FC<{character: Character}> = ({
     character,
@@ -66,6 +73,7 @@ export const CharacterSearchScreen: React.FC<CharacterSearchScreenProps> = ({
         <CharacterSearchTitle/>
         <CustomTextInput
           label='Nome do Personagem'
+          onChangeText={debouncedHandleTextChangeRef.current}
         />
       </View>
 
