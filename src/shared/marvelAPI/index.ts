@@ -9,28 +9,41 @@ import { Character } from "../../types/Character";
 import { CharacterDataContainer } from "../../types/CharacterDataContainerType";
 import { CharacterDataWrapperType } from "../../types/CharacterDataWrapperType";
 import { GenericObject } from "../../types/GenericObject";
+import useSWR, { KeyedMutator, mutate } from "swr";
 
 
 const axiosInstance = axios.create({
   baseURL: MARVEL_API_URL
 })
 
-const paramsWithAuth = (params?: GenericObject): GenericObject  => { 
+const paramsWithAuth = (params: GenericObject = {}): GenericObject  => { 
   const ts = "timestampis" + Date.now();
 
   return({
-  ...(params || {}),
+  ...params,
   apikey: MARVEL_PUB_KEY,
   ts,
   hash: MD5(ts + MARVEL_PRIV_KEY + MARVEL_PUB_KEY).toString(),
 })}
 
 
+const buildSearchParam = (searchTerm: string): GenericObject => {
+  const param: GenericObject = {};
+  !!searchTerm && (param["nameStartsWith"] = searchTerm);
+  return param;
+}
+
+
+const buildPaginationParams = (page: number): GenericObject => ({
+  limit: 4,
+  offset: (page - 1) * 4,
+})
+
+
 const getCharacters = async (page: number = 1, searchName: string = ""): Promise<CharacterDataContainer> => {
   const params = paramsWithAuth({
-    limit: 4,
-    offset: (page - 1) * 4,
-    ...(!!searchName && { nameStartsWith: searchName }) || {},
+    ...buildPaginationParams(page),
+    ...buildSearchParam(searchName),
   });
 
   const res: AxiosResponse<CharacterDataWrapperType> = await axiosInstance.get(
@@ -41,38 +54,35 @@ const getCharacters = async (page: number = 1, searchName: string = ""): Promise
 }
 
 
-export const buildCharacterPageDataFetcher = (config: {
-  characterDataSetter: (characters: Character[]) => void,
-  onError: (error: AxiosError) => void,
-  pageSetter?: (page: number) => void,
-  totalPagesSetter?: (pages: number) => void,
-  loadingSetter?: (isLoading: boolean) => void,
-}): (page?: number, search?: string) => void => {
-  const {
-    characterDataSetter,
-    onError,
-    pageSetter = _ => {},
-    totalPagesSetter = _ => {},
-    loadingSetter = _ => {},
-  } = config;
+type CharacterPageSWR = {
+  characters: Array<Character> | undefined,
+  error: AxiosError,
+  isLoading: boolean,
+  totalNumPages: number,
+  mutate: KeyedMutator<any>,
+}
+const useCharacterPageSWR = (page: number = 1, name: string = ""): CharacterPageSWR => {
+  const { data, error, isLoading, mutate } = useSWR(
+    ['/v1/public/characters', page, name],
+    _ => getCharacters(page, name).then(data => data)
+  );
+  return ({
+    characters: data?.results,
+    error,
+    isLoading,
+    totalNumPages: (data && Math.ceil(data.total / data.limit)) || 1,
+    mutate,
+  });
+}
 
-  return (page: number = 1, search: string = '') => {
-    loadingSetter(true);
-    getCharacters(page, search)
-    .then(res => {
-      characterDataSetter(res.results);
-      pageSetter(page);
-      totalPagesSetter(Math.ceil(res.total / res.limit));
-    })
-    .catch(onError)
-    .finally(() => {
-      loadingSetter(false);
-    })
-  }
+
+const refreshCharacterPageSWR = (page: number = 1, name: string = "") => {
+  mutate(['/v1/public/characters', page, name]);
 }
 
 
 export default {
   paramsWithAuth,
-  getCharacters,
+  useCharacterPageSWR,
+  refreshCharacterPageSWR,
 }

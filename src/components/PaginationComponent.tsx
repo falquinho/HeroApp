@@ -1,5 +1,5 @@
 import React from 'react'
-import { FlatList, StyleSheet, TouchableOpacity, View, ViewStyle } from 'react-native'
+import { FlatList, StyleSheet, TextStyle, TouchableOpacity, View, ViewStyle } from 'react-native'
 import { Colors } from '../shared/colors'
 import { Spacing } from '../shared/spacing'
 import { CustomText } from './CustomText'
@@ -26,9 +26,10 @@ export const PaginationComponent: React.FC<PaginationComponentProps> = ({
 
   return (
     <View style={styles.container}>
-      <LeftArrow
+      <PaginationArrow
         onPress={() => onPageChange(currentPage - 1)}
         disabled={currentPage <= 1 || disabled}
+        direction='left'
       />
       <FlatList
         horizontal
@@ -44,9 +45,10 @@ export const PaginationComponent: React.FC<PaginationComponentProps> = ({
         )}
         ItemSeparatorComponent={() => <Spacer size={20}/>}
       />
-      <RightArrow
+      <PaginationArrow
         onPress={() => onPageChange(currentPage + 1)}
         disabled={currentPage >= totalNumPages || disabled}
+        direction='right'
       />
     </View>
   )
@@ -65,34 +67,38 @@ type PageCircleProps = {
 
 const PageCircle: React.FC<PageCircleProps> = ({
   pageNum,
-  selected,
-  onPress,
-  disabled,
-}) => {
-  const circleStyle = {
-    ...styles.circle,
-    ...((selected && styles.selectedCircle) || {}),
-    ...(disabled && styleDisabled) || {},
-  }
+    selected,
+    onPress,
+    disabled,
+}) => (
+  <TouchableOpacity
+    style={circleStyle(disabled, selected)}
+    onPress={onPress}
+    disabled={disabled}
+  >
+    <CustomText style={textStyle(selected)}>
+      {pageNum}
+    </CustomText>
+  </TouchableOpacity>
+);
 
-  const textStyle = {
-    ...styles.text,
-    ...((selected && styles.selectedText) || {}),
-    ...(disabled && styleDisabled) || {},
-  }
+const circleStyle = (disabled: boolean, selected: boolean): ViewStyle => ({
+  height: 32,
+  width: 32,
+  borderWidth: 1,
+  borderColor: Colors.primary,
+  borderRadius: 16,
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: selected? Colors.primary : undefined,
+  opacity: disabled? 0.35 : 1,
+});
 
-  return (
-    <TouchableOpacity
-      style={circleStyle}
-      onPress={onPress}
-      disabled={disabled}
-    >
-      <CustomText style={textStyle}>
-        {pageNum}
-      </CustomText>
-    </TouchableOpacity>
-  )
-}
+const textStyle = (selected: boolean): TextStyle => ({
+  fontSize: 21,
+  lineHeight: 24,
+  color: selected? 'white' : Colors.primary,
+});
 
 
 /**
@@ -101,33 +107,27 @@ const PageCircle: React.FC<PageCircleProps> = ({
 type ArrowProps = {
   onPress: () => void,
   disabled: boolean,
+  direction: 'left' | 'right', 
 }
 
-const LeftArrow: React.FC<ArrowProps> = ({
-  disabled,
-  onPress,
-}) => {
-  const finalStyle = {
-    ...styleTriLeft,
-    ...(disabled && styleDisabled) || {},
-  }
+const PaginationArrow: React.FC<ArrowProps> = (props) => {
   return (
-    <TouchableOpacity style={finalStyle} onPress={onPress} disabled={disabled}/>
+    <TouchableOpacity {...props} style={arrowStyle(props)}/>
   )
 }
 
-const RightArrow: React.FC<ArrowProps> = ({
-  disabled,
-  onPress,
-}) => {
-  const finalStyle = {
-    ...styleTriRight,
-    ...(disabled && styleDisabled) || {},
-  }
-  return (
-    <TouchableOpacity style={finalStyle} onPress={onPress} disabled={disabled}/>
-  )
-}
+const arrowStyle = ({direction, disabled}: ArrowProps): ViewStyle => ({
+  width: 0,
+  height: 0,
+  borderColor: 'transparent',
+  borderTopWidth: 16,
+  borderBottomWidth: 16,
+  borderRightWidth: direction == 'left'? 26 : 0,
+  borderRightColor: direction == 'left'? Colors.primary : undefined,
+  borderLeftWidth: direction == 'left'? 0 : 26,
+  borderLeftColor: direction == 'left'? undefined : Colors.primary,
+  opacity: disabled? 0.35 : 1,
+});
 
 
 /**
@@ -146,50 +146,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: 60,
     flexGrow: 0,
   },
-  text: {
-    fontSize: 21,
-    lineHeight: 24,
-    color: Colors.primary,
-  },
-  selectedText: {
-    color: 'white'
-  },
-  circle: {
-    height: 32,
-    width: 32,
-    borderWidth: 1,
-    borderColor: Colors.primary,
-    borderRadius: 16,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  selectedCircle: {
-    backgroundColor: Colors.primary,
-  },
 });
 
-const styleTriCommon: ViewStyle = {
-  width: 0,
-  height: 0,
-  borderColor: 'transparent',
-  borderTopWidth: 16,
-  borderBottomWidth: 16,
-}
-
-const styleTriLeft: ViewStyle = {
-  ...styleTriCommon,
-  borderRightWidth: 26,
-  borderRightColor: Colors.primary,
-  borderLeftWidth: 0,
-}
-
-const styleTriRight: ViewStyle = {
-  ...styleTriCommon,
-  borderLeftWidth: 26,
-  borderLeftColor: Colors.primary,
-  borderRightWidth: 0,
-}
-
-const styleDisabled: ViewStyle = {
-  opacity: 0.35,
-}

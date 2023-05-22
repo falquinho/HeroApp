@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import React, { useEffect, useRef, useState } from 'react'
-import { Alert, FlatList, SafeAreaView, StyleSheet, View } from 'react-native'
+import React, { useRef, useState } from 'react'
+import { FlatList, SafeAreaView, StyleSheet, View } from 'react-native'
 import { CharacterRowComponent } from '../components/CharacterRowComponent'
 import { CustomTextInput } from '../components/CustomTextInput'
 import { EmptyListComponent } from '../components/EmptyListComponent'
@@ -9,7 +9,7 @@ import { Spacer } from '../components/Spacer'
 import { MainStackParamList } from '../navigators/MainNavigator'
 import { Colors } from '../shared/colors'
 import { debounce } from '../shared/debounce'
-import marvelAPI, { buildCharacterPageDataFetcher } from '../shared/marvelAPI'
+import marvelAPI from '../shared/marvelAPI'
 import { Spacing } from '../shared/spacing'
 import { Character } from '../types/Character'
 import { CharacterListHeader, CharacterSearchTitle } from './CharacterSearchScreen.components'
@@ -21,51 +21,32 @@ export type CharacterSearchScreenProps =
 export const CharacterSearchScreen: React.FC<CharacterSearchScreenProps> = ({
   navigation,
 }) => {
-  const [loading, setLoading] = useState(false);
   const [currPage, setCurrPage] = useState(1);
-  const [totalNumPages, setTotalNumPages] = useState(0);
-  const [characters, setCharacters] = useState<Array<Character>>([]);
   const [input, setInput] = useState("");
 
-  const fetchPageData = buildCharacterPageDataFetcher({
-    characterDataSetter: setCharacters,
-    onError: (error: any) => {
-      Alert.alert(
-        "Erro ao buscar personagens",
-        error.response?.data?.message || "",
-      )
-    },
-    loadingSetter: setLoading,
-    pageSetter: setCurrPage,
-    totalPagesSetter: setTotalNumPages,
-  });
-
-  useEffect(() => {
-    fetchPageData(currPage);
-  }, []);
+  const {
+    characters,
+    isLoading,
+    totalNumPages,
+    mutate,
+  } = marvelAPI.useCharacterPageSWR(currPage, input);
 
   const handlePageChange = (page: number) => {
     setCurrPage(page);
-    fetchPageData(page, input);
   }
 
   const handleTextChange = (text: string) => {
-    setCharacters([]);
+    setCurrPage(1);
     setInput(text);
-    fetchPageData(1, text);
   }
   const debouncedHandleTextChangeRef = useRef(
     debounce<(text: string) => void>(handleTextChange)
   );
 
-  const CharacterRowWithNavigation: React.FC<{character: Character}> = ({
-    character,
-  }) => (
-    <CharacterRowComponent
-      character={character}
-      onPress={() => navigation.push("CharacterDetails", { character })}
-    />
-  )
+  const handleRefresh = () => {
+    // marvelAPI.refreshCharacterPageSWR(currPage, input);
+    mutate();
+  }
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -83,22 +64,25 @@ export const CharacterSearchScreen: React.FC<CharacterSearchScreenProps> = ({
           data={characters}
           keyExtractor={item => "" + item.id}
           renderItem={({item}) => (
-            <CharacterRowWithNavigation character={item}/>
+            <CharacterRowComponent
+              character={item}
+              onPress={() => navigation.push("CharacterDetails", { character: item })}
+            />
           )}
           style={{flexGrow: 0}}
           ItemSeparatorComponent={() => <Spacer size={1}/>}
           ListFooterComponent={() => <Spacer size={1}/>}
           ListEmptyComponent={() => (
-            (!loading && <EmptyListComponent/>) || null
+            (!isLoading && <EmptyListComponent/>) || null
           )}
-          refreshing={loading}
-          onRefresh={() => fetchPageData(currPage)}
+          refreshing={isLoading}
+          onRefresh={handleRefresh}
         />
         <PaginationComponent
           currentPage={currPage}
           totalNumPages={totalNumPages}
           onPageChange={handlePageChange}
-          disabled={loading || currPage > totalNumPages}
+          disabled={isLoading || currPage > totalNumPages}
         />
       </View>
     </SafeAreaView>
